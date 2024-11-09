@@ -1,0 +1,43 @@
+"dodawanie pol dla kwadrat"
+kwadrat1 := Kwadrat new initialize: 4.
+Transcript show: 'Pole kwadratu: ', kwadrat1 pole printString; cr.
+
+kwadrat2 := Kwadrat new initialize: 6.
+Transcript show: 'Pole kwadratu: ', kwadrat2 pole printString; cr.
+
+wynikkwadrat := kwadrat1 + kwadrat2.
+Transcript show: 'Pole z kwadratow: ', (wynikkwadrat pole printString); cr.
+
+"dodawanie pol dla trapez"
+trapez1 := TrapezProstokatny new initialize: 11 bok1: 15 wys: 8.
+Transcript show: 'Pole trapezu: ', (trapez1 pole printString); cr.
+
+trapez2 := TrapezProstokatny new initialize: 10 bok1: 15 wys: 8.
+Transcript show: 'Pole trapezu: ', (trapez2 pole printString); cr.
+
+wyniktrapez := trapez1 + trapez2.
+Transcript show: 'Pole z trapezow: ', (wyniktrapez pole printString); cr.
+
+trapez1 drukuj.  
+trapez2 drukuj.  
+
+kwadrat1 drukuj.  
+kwadrat2 drukuj.  
+
+kwadrat1 drukuj.
+"skalowanie - kwadrat"
+kwadrat1 := kwadrat1 skaluj: 1.5.
+kwadrat1 drukuj.  
+
+trapez2 drukuj.
+"skalowanie - trapez"
+trapez2 := trapez2 skaluj: 3.
+trapez2 drukuj.  
+
+
+Transcript show: (kwadrat1 = kwadrat2) printString; cr. 
+
+kwadrat3 := Kwadrat new initialize: 4.
+kwadrat4 := Kwadrat new initialize: 4.
+
+Transcript show: (kwadrat3 = kwadrat4) printString; cr. 
