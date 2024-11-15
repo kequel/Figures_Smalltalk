@@ -1,6 +1,6 @@
 "Definicja klasy Wielokat"
 Object subclass: Wielokat [
-    | wierzcholki nazwa skala |  "Dodano zmienną instancyjną 'skala'"
+    | wierzcholki nazwa skala |  
 
     Wielokat class >> initialize_list: listaWierzcholkow name: nowaNazwa [
         "Konstruktor obiektu - wielokąta"
@@ -10,14 +10,14 @@ Object subclass: Wielokat [
     Wielokat >> initialize_list: listaWierzcholkow name: nowaNazwa [
         nazwa := nowaNazwa.
         wierzcholki := listaWierzcholkow.
-        skala := 1.  "Inicjalizacja skali na 1"
+        skala := 1.  "skala defaultowo na 1"
     ]
 
     Wielokat >> initialize: liczbaWierzcholkow name: nowaNazwa [
         nazwa := nowaNazwa.
         wierzcholki := Array new: liczbaWierzcholkow.
         wierzcholki at: 1 put: 0@0.
-        skala := 1.  "Inicjalizacja skali na 1"
+        skala := 1.  "skala defaultowo na 1"
     ]
 
     Wielokat >> nazwa [
@@ -53,7 +53,7 @@ Object subclass: Wielokat [
         1 to: wierzcholki size do: [:i |
             noweWierzcholki at: i put: (((wierzcholki at: i) x * skalaCzynnika) @ ((wierzcholki at: i) y * skalaCzynnika))].
         nowyObiekt := (self class new) initialize_list: noweWierzcholki name: self nazwa.
-        nowyObiekt skala: self skala * skalaCzynnika.  "Aktualizacja skali"
+        nowyObiekt skala: self skala * skalaCzynnika.  
         ^nowyObiekt.
     ]
 ]
@@ -118,15 +118,32 @@ Wielokat subclass: TrapezProstokatny [
     ]
 
     TrapezProstokatny >> = trapez [
-        | selfBase1 selfBase2 selfHeight trapezBase1 trapezBase2 trapezHeight |
+        | selfMala selfDuza selfWys trapezMala trapezDuza trapezWys |
         (self class = trapez class) ifFalse: [^false].
-        selfBase1 := (self wierzcholki at: 2) x.
-        selfBase2 := (self wierzcholki at: 3) x.
-        selfHeight := (self wierzcholki at: 3) y.
-        trapezBase1 := (trapez wierzcholki at: 2) x.
-        trapezBase2 := (trapez wierzcholki at: 3) x.
-        trapezHeight := (trapez wierzcholki at: 3) y.
-        ^(selfBase1 = trapezBase1 and: [selfBase2 = trapezBase2 and: [selfHeight = trapezHeight]]).
+
+        "podstawy posegregowane jako wieksza i mniejsza self"
+        ((self wierzcholki at: 2) x) <= ((self wierzcholki at: 3) x)
+            ifTrue: [
+                selfMala := (self wierzcholki at: 2) x.
+                selfDuza := (self wierzcholki at: 3) x.
+            ] ifFalse: [
+                selfMala := (self wierzcholki at: 3) x.
+                selfDuza := (self wierzcholki at: 2) x.
+            ].
+        selfWys := (self wierzcholki at: 3) y.
+
+        "podstawy posegregowane jako wieksza i mniejsza trapez"
+        ((trapez wierzcholki at: 2) x) <= ((trapez wierzcholki at: 3) x)
+            ifTrue: [
+                trapezMala := (trapez wierzcholki at: 2) x.
+                trapezDuza := (trapez wierzcholki at: 3) x.
+            ] ifFalse: [
+                trapezMala := (trapez wierzcholki at: 3) x.
+                trapezDuza := (trapez wierzcholki at: 2) x.
+            ].
+        trapezWys := (trapez wierzcholki at: 3) y.
+
+        ^(selfMala = trapezMala and: [selfDuza = trapezDuza and: [selfWys = trapezWys]]).
     ]
 
     TrapezProstokatny >> + figura [
@@ -177,8 +194,7 @@ trapez2 drukuj.
 trapez2 drukuj.
 
 trapez3 := TrapezProstokatny new initialize: 10 bok1: 15 wys: 8.
-trapez4 := TrapezProstokatny new initialize: 10 bok1: 15 wys: 8.
-
+trapez4 := TrapezProstokatny new initialize: 15 bok1: 10 wys: 8.
 
 Transcript show: (trapez3 = trapez4) printString; cr.
 
