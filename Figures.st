@@ -1,233 +1,168 @@
-<?xml version="1.0"?>
+"Definicja klasy Wielokat"
+Object subclass: Wielokat [
+    | wierzcholki nazwa |
 
-<st-source>
-<time-stamp>From VisualWorks® Personal Use Edition, 8.3 of 28 lipca 2017 on 15 listopada 2024 at 19:35:24</time-stamp>
+    Wielokat class >> initialize_list: listaWierzcholkow name: nowaNazwa [
+        "Konstruktor obiektu - wielokąta"
+        ^self new initialize_list: listaWierzcholkow name: nowaNazwa.
+    ]
 
+    Wielokat >> initialize_list: listaWierzcholkow name: nowaNazwa [
+        nazwa := nowaNazwa.
+        wierzcholki := listaWierzcholkow.
+    ]
 
-<component-created>
-<name>projekt</name> <type>package</type>
-</component-created><!-- Package projekt* -->
+    Wielokat >> initialize: liczbaWierzcholkow name: nowaNazwa [
+        nazwa := nowaNazwa.
+        wierzcholki := Array new: liczbaWierzcholkow.
+        wierzcholki at: 1 put: 0@0.
+    ]
 
+    Wielokat >> nazwa [
+        ^nazwa.
+    ]
 
-<component-property>
-<name>projekt</name> <type>package</type>
-<property>packageName</property> <value>'projekt'</value>
-</component-property>
+    Wielokat >> nazwa: nowaNazwa [
+        nazwa := nowaNazwa.
+    ]
 
-<class>
-<name>Wielokat</name>
-<environment>Smalltalk</environment>
-<super>Core.Object</super>
-<private>false</private>
-<indexed-type>none</indexed-type>
-<inst-vars>wierzcholki nazwa </inst-vars>
-<class-inst-vars></class-inst-vars>
-<imports></imports>
-<category>JezykiProgramowania</category>
-<attributes>
-<package>projekt</package>
-</attributes>
-</class>
+    Wielokat >> drukuj [
+        Transcript show: 'Nazwa: ', nazwa; cr.
+        1 to: wierzcholki size do: [:i |
+            Transcript show: 'Wierzcholek ', i printString, ': ', (wierzcholki at: i) printString; cr].
+        Transcript show: 'Pole = ', self pole printString; cr; cr.
+    ]
 
-<class>
-<name>Kwadrat</name>
-<environment>Smalltalk</environment>
-<super>Wielokat</super>
-<private>false</private>
-<indexed-type>none</indexed-type>
-<inst-vars></inst-vars>
-<class-inst-vars></class-inst-vars>
-<imports></imports>
-<category>JezykiProgramowania</category>
-<attributes>
-<package>projekt</package>
-</attributes>
-</class>
+    Wielokat >> skaluj: skala [
+        | noweWierzcholki |
+        Transcript show: 'Skaluje boki figury: ', self nazwa, ' o liczbe ', skala printString; cr.
+        noweWierzcholki := Array new: wierzcholki size.
+        1 to: wierzcholki size do: [:i |
+            noweWierzcholki at: i put: (((wierzcholki at: i) x * skala) @ ((wierzcholki at: i) y * skala))].
+        ^(self class new) initialize_list: noweWierzcholki name: self nazwa.
+    ]
+]
 
-<class>
-<name>TrapezProstokatny</name>
-<environment>Smalltalk</environment>
-<super>Wielokat</super>
-<private>false</private>
-<indexed-type>none</indexed-type>
-<inst-vars></inst-vars>
-<class-inst-vars></class-inst-vars>
-<imports></imports>
-<category>JezykiProgramowania</category>
-<attributes>
-<package>projekt</package>
-</attributes>
-</class>
+"Definicja klasy Kwadrat"
+Wielokat subclass: Kwadrat [
+    Kwadrat class >> initialize: bok [
+        ^self new initialize: bok.
+    ]
 
-<methods>
-<class-id>Wielokat</class-id> <category>accessing</category>
+    Kwadrat >> initialize: bok [
+        super initialize: 4 name: 'Kwadrat'.
+        wierzcholki at: 2 put: bok@0.
+        wierzcholki at: 3 put: bok@bok.
+        wierzcholki at: 4 put: 0@bok.
+    ]
 
-<body package="projekt" selector="drukuj">drukuj
-	"wyświetla na ekranie współrzędne wierzchołków wielokąta"
-	Transcript show: 'Nazwa: ', nazwa; cr.
-	1 to: wierzcholki size do: [:i | Transcript show: 'wierzcholek ', i printString, ': ', (wierzcholki at: i) printString; cr].
-	Transcript show: 'Pole = ', self pole printString; cr; cr.</body>
+    Kwadrat >> pole [
+        ^(wierzcholki at: 2) x squared.
+    ]
 
-<body package="projekt" selector="nazwa:">nazwa: nowa_nazwa
-	"ustawia nowa nazwe wielokata"
+    Kwadrat >> = kwadrat [
+        ^(self pole) = (kwadrat pole).
+    ]
 
-	nazwa:=nowa_nazwa</body>
+    Kwadrat >> + figura [
+        | p |
+        p := self pole + figura pole.
+        ^(Kwadrat new) initialize: p sqrt.
+    ]
+]
 
-<body package="projekt" selector="nazwa">nazwa
-	"podaje nazwe wielokata"
+"Definicja klasy TrapezProstokatny"
+Wielokat subclass: TrapezProstokatny [
+    TrapezProstokatny class >> initialize: bok bok1: bok1 wys: wys [
+        ^self new initialize: bok bok1: bok1 wys: wys.
+    ]
 
-	^nazwa</body>
-</methods>
+    TrapezProstokatny >> initialize: bok bok1: bok1 wys: wys [
+        | lista |
+        lista := Array new: 4.
+        lista at: 1 put: 0@0.
+        lista at: 2 put: bok@0.
+        lista at: 3 put: bok1@wys.
+        lista at: 4 put: 0@wys.
+        
+        "Ensure wierzcholki is initialized correctly"
+        wierzcholki ifNil: [wierzcholki := lista].
+        super initialize_list: lista name: 'TrapezProstokatny'.
+    ]
+    
+    TrapezProstokatny >> wierzcholki[
+    ^ wierzcholki
+    ]
 
-<methods>
-<class-id>Wielokat</class-id> <category>arithmetic</category>
+    TrapezProstokatny >> pole [
+        | bok bok1 wys |
+        bok := (wierzcholki at: 2) x.
+        bok1 := (wierzcholki at: 3) x.
+        wys := (wierzcholki at: 3) y.
+        ^((bok + bok1) / 2.0) * wys.
+    ]
 
-<body package="projekt" selector="skaluj:">skaluj: skala
-	"skaluje wielokat o podana skale"
-	| noweWierzcholki |
-	Transcript show: 'Skaluje boki figury: ', self nazwa, ' o liczbe ', skala printString; cr.
-	noweWierzcholki:=Array new: wierzcholki size.
-	1 to: wierzcholki size do: [:i | noweWierzcholki at: i put: (((wierzcholki at: i) x * skala) @ ((wierzcholki at: i) y * skala))].
-	^(self class new) initialize_list: noweWierzcholki name: self nazwa</body>
-</methods>
+    TrapezProstokatny >> = trapez [
+        | selfBase1 selfBase2 selfHeight trapezBase1 trapezBase2 trapezHeight |
+        (self class = trapez class) ifFalse: [^false].
+        selfBase1 := (self wierzcholki at: 2) x.
+        selfBase2 := (self wierzcholki at: 3) x.
+        selfHeight := (self wierzcholki at: 3) y.
+        trapezBase1 := (trapez wierzcholki at: 2) x.
+        trapezBase2 := (trapez wierzcholki at: 3) x.
+        trapezHeight := (trapez wierzcholki at: 3) y.
+        ^(selfBase1 = trapezBase1 and: [selfBase2 = trapezBase2 and: [selfHeight = trapezHeight]]).
+    ]
 
-<methods>
-<class-id>Wielokat</class-id> <category>initialize-release</category>
+    TrapezProstokatny >> + figura [
+        | p |
+        p := self pole + figura pole.
+        ^(Kwadrat new) initialize: p sqrt.
+    ]
+]
 
-<body package="projekt" selector="initialize_list:name:">initialize_list: listaWierzcholkow name: nowaNazwa
-	"konstruktor obiektu - wielokata"
+"dodawanie pol dla kwadrat"
+kwadrat1 := Kwadrat new initialize: 4.
+Transcript show: 'Pole kwadratu: ', kwadrat1 pole printString; cr.
 
-	nazwa:=nowaNazwa.
-	wierzcholki:=listaWierzcholkow.</body>
+kwadrat2 := Kwadrat new initialize: 6.
+Transcript show: 'Pole kwadratu: ', kwadrat2 pole printString; cr.
 
-<body package="projekt" selector="initialize:name:">initialize: liczbaWierzcholkow name: nowaNazwa
-	"konstruktor obiektu - wielokata"
+wynikkwadrat := kwadrat1 + kwadrat2.
+Transcript show: 'Pole z kwadratow: ', (wynikkwadrat pole printString); cr.
 
-	nazwa:=nowaNazwa.
-	wierzcholki:=Array new: liczbaWierzcholkow.
-	wierzcholki at: 1 put: 0@0.</body>
-</methods>
+"dodawanie pol dla trapez"
+trapez1 := TrapezProstokatny new initialize: 8 bok1: 15 wys: 8.
+Transcript show: 'Pole trapezu: ', (trapez1 pole printString); cr.
 
+trapez2 := TrapezProstokatny new initialize: 10 bok1: 15 wys: 8.
+Transcript show: 'Pole trapezu: ', (trapez2 pole printString); cr.
 
-<methods>
-<class-id>Kwadrat class</class-id> <category>actions</category>
+wyniktrapez := trapez1 + trapez2.
+Transcript show: 'Pole z trapezow: ', (wyniktrapez pole printString); cr.
 
-<body package="projekt" selector="pole">pole
-	"licz pole kwadratu"
+trapez1 drukuj.  
+trapez2 drukuj.  
 
-	^(wierzcholki at: 2) x squared</body>
-</methods>
+kwadrat1 drukuj.  
+kwadrat2 drukuj.  
+kwadrat1 drukuj.
 
+"skalowanie - kwadrat"
+kwadrat1 := kwadrat1 skaluj: 1.5.
+kwadrat1 drukuj.  
 
-<methods>
-<class-id>Kwadrat</class-id> <category>comparing</category>
+trapez2 drukuj.
+"skalowanie - trapez"
+trapez2 := trapez2 skaluj: 3.
+trapez2 drukuj.  
 
-<body package="projekt" selector="=">= kwadrat
-	"dodaj 2 figury w sensie pola"
+trapez3 := TrapezProstokatny new initialize: 10 bok1: 15 wys: 8.
+trapez4 := TrapezProstokatny new initialize: 10 bok1: 15 wys: 8.
 
-	^( self pole)=(kwadrat pole).</body>
-</methods>
+Transcript show: (trapez3 = trapez4) printString; cr. 
 
-<methods>
-<class-id>Kwadrat</class-id> <category>arithmetic</category>
+kwadrat3 := Kwadrat new initialize: 4.
+kwadrat4 := Kwadrat new initialize: 4.
 
-<body package="projekt" selector="+">+ figura
-	"dodaj 2 figury w sensie pola"
-
-	| p |
-
-	p:=self pole + figura pole.
-	^(Kwadrat new) initialize: p sqrt</body>
-</methods>
-
-<methods>
-<class-id>Kwadrat</class-id> <category>actions</category>
-
-<body package="projekt" selector="pole">pole
-	"licz pole kwadratu"
-
-	^(wierzcholki at: 2) x squared</body>
-</methods>
-
-<methods>
-<class-id>Kwadrat</class-id> <category>initialize-release</category>
-
-<body package="projekt" selector="initialize:">initialize: bok
-	"tworz kwadrat o podanym boku"
-
-	super initialize: 4 name: 'Kwadrat'.
-	wierzcholki at: 2 put: bok@0.
-	wierzcholki at: 3 put: bok@bok.
-	wierzcholki at: 4 put: 0@bok.</body>
-</methods>
-
-
-<methods>
-<class-id>TrapezProstokatny</class-id> <category>comparing</category>
-
-<body package="projekt" selector="=">= trapez
-    "Sprawdza, czy dwa trapezy prostokątne są przystające"
-    | selfBase1 selfBase2 selfHeight trapezBase1 trapezBase2 trapezHeight |
-
-    "Sprawdź, czy oba obiekty są instancjami tej samej klasy"
-    (self class = trapez class) ifFalse: [^ false].
-
-    "Pobierz długości podstaw i wysokości dla self"
-    selfBase1 := (self wierzcholki at: 2) x.
-    selfBase2 := (self wierzcholki at: 3) x.
-    selfHeight := (self wierzcholki at: 3) y.
-
-    "Pobierz długości podstaw i wysokości dla trapez"
-    trapezBase1 := (trapez wierzcholki at: 2) x.
-    trapezBase2 := (trapez wierzcholki at: 3) x.
-    trapezHeight := (trapez wierzcholki at: 3) y.
-
-    "Sprawdź, czy obie podstawy i wysokość są równe"
-    ^ (selfBase1 = trapezBase1 and: [selfBase2 = trapezBase2 and: [selfHeight = trapezHeight]]).</body>
-</methods>
-
-<methods>
-<class-id>TrapezProstokatny</class-id> <category>arithmetic</category>
-
-<body package="projekt" selector="+">+ figura
-	"dodaj 2 figury w sensie pola"
-
-	| p |
- "tak samo jak kwadrat - bo przeksztalcam to na kwadrat, nie wazne jaka figura, sumowanie jest w sensie pola"
-	p:=self pole + figura pole.
-	^(Kwadrat new) initialize: p sqrt</body>
-</methods>
-
-<methods>
-<class-id>TrapezProstokatny</class-id> <category>actions</category>
-
-<body package="projekt" selector="pole">pole
-    "licz pole trapezu"
-    | bok bok1 wys |
-    bok := (wierzcholki at: 2) x.
-    bok1 := (wierzcholki at: 3) x.
-    wys := (wierzcholki at: 3) y.
-    ^(bok + bok1) / 2.0 * wys</body>
-</methods>
-
-<methods>
-<class-id>TrapezProstokatny</class-id> <category>initialize-release</category>
-
-<body package="projekt" selector="initialize:">initialize: bok</body>
-
-<body package="projekt" selector="initialize:bok1:wys:">initialize: bok bok1: bok1 wys: wys
-    "Inicjalizuje trapez prostokątny z trzema parametrami"
-    | lista |
-    lista := Array new: 4.
-
-    lista at: 1 put: 0@0.          "Pierwszy wierzchołek (0, 0) - początek podstawy bok"
-    lista at: 2 put: bok@0.        "Drugi wierzchołek na końcu podstawy bok (bok, 0)"
-    lista at: 3 put: bok1@wys.     "Trzeci wierzchołek na końcu podstawy bok1 (bok1, wys)"
-    lista at: 4 put: 0@wys.        "Czwarty wierzchołek w punkcie (0, wys) - lewa strona wys"
-
-    super initialize_list: lista name: 'TrapezProstokatny'.</body>
-</methods>
-
-
-
-</st-source>
+Transcript show: (kwadrat3 = kwadrat4) printString; cr.
